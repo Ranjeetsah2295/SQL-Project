@@ -1,0 +1,135 @@
+What is Data?
+Data is raw, unprocessed facts and figures without any context. 
+It can be numbers, text, images, audio, etc., that represent information about 
+objects, events, and their interactions.
+
+Types of Data:
+Quantitative Data: 
+This type of data is numerical and can be measured. 
+Examples include height, weight, age, and number of items.
+
+Qualitative Data: 
+This type of data is descriptive and conceptual. 
+Examples include colors, names, labels, and yes/no answers.
+
+Formats of Data:
+Structured Data: 
+	This is data that is organized in a fixed format. 
+	Examples include Excel files with rows and columns, relational databases, and matrix data.
+Example: An Excel file with columns for Name, Age, and Address.
+
+Unstructured Data: 
+	This is data that does not have a pre-defined format or structure. 
+	Examples include audio files, video files, text documents, and PDF files.
+Example: A folder containing various MP3 songs and video clips.
+
+
+What is Information?
+Information is processed data that is meaningful and useful for decision-making. 
+It is data that has been given context and interpretation.
+
+What is a Database?
+A database is a collection of organized data that can be easily accessed, managed, and updated. 
+It stores information in a structured format and allows users to perform operations 
+such as retrieving, inserting, updating, and deleting data.
+
+Why Do We Need a Database?
+Databases are essential for efficiently managing large amounts of data. 
+For example, a hospital can use a database to store patient records, 
+doctor information, and treatment details, making it easy to retrieve and update information as needed.
+
+Types of Databases/DBMS:
+Hierarchical Databases: 
+	Organize data in a tree-like structure with parent-child relationships.
+Example: An organizational chart.
+
+Network Databases: 
+	Similar to hierarchical databases but allow multiple parent-child relationships, 
+	forming a network structure.
+Example: A university course registration system where courses can have multiple prerequisites
+
+Relational Databases: 
+	Store data in tables with rows and columns. 
+	Tables can be related to each other based on common fields.
+Example: A customer order system with separate tables for customers, orders, and products.
+
+Object-Oriented Databases: 
+	Store data in the form of objects, similar to object-oriented programming.
+Example: A multimedia database storing audio, video, and image objects.
+
+Database Languages:
+Structured Data:
+T-SQL (Transact SQL): Used by Microsoft SQL Server.
+MySQL: Open-source relational database management system.
+Oracle (PL/SQL): Used by Oracle databases.
+
+Unstructured Data:
+JSON (JavaScript Object Notation): Used for storing and transporting data.
+Example:
+json
+Copy code
+{
+    "Name": "Solomon",
+    "age": 25,
+    "Address": "USA"
+}
+MongoDB: NoSQL database that stores data in JSON-like format.
+Cassandra: NoSQL database for handling large amounts of data across many servers.
+Apache Hive: Data warehouse software built on Hadoop for querying and analyzing large datasets.
+Cosmos DB: Globally distributed, multi-model database service by Microsoft.
+
+
+What is DBMS?
+A Database Management System (DBMS) is a collection of programs that 
+help users create, manage, and manipulate databases. 
+It allows multiple databases to have multiple tables, and it 
+provides tools to access, update, and generate reports from the data.
+
+Examples of R-DBMS Languages:
+Oracle
+Sybase
+T-SQL (MS-SQL Server)
+Microsoft Access
+Ingres
+MySQL
+
+Summary of SQL:
+SQL (Structured Query Language) is a standard language for managing and manipulating databases.
+
+Why SQL?
+Data Management: Insert, update, and delete data.
+Data Retrieval: Retrieve data using queries.
+Structured Data Description: Define and describe structured data.
+Database Manipulation: Create, alter, and drop database objects.
+Advanced Features: Create views, stored procedures, and triggers.
+
+How SQL Works:
+Architecture of SQL ( This will be covered in Last Session of SQL)
+
+SQL Command Classification:
+SQL commands are broadly divided into four categories:
+
+DDL (Data Definition Language): Deals with database objects.
+CREATE: Creates a new table or database.
+ALTER: Modifies an existing table.
+DELETE: Removes data from a table.
+TRUNCATE: Deletes all rows from a table without deleting the table structure.
+DROP: Deletes a table or database.
+
+
+DML (Data Manipulation Language): Manipulates data within tables.
+SELECT: Retrieves data from a table.
+INSERT: Adds new data to a table.
+UPDATE: Modifies existing data in a table.
+DELETE: Removes data from a table based on a condition.
+
+
+DCL (Data Control Language): Controls access to the data.
+GRANT: Gives user access rights to the database.
+REVOKE: Removes user access rights to the database.
+
+
+TCL (Transaction Control Language): Manages transactions within a database.
+COMMIT: Saves the transaction.
+ROLLBACK: Reverts changes made by the transaction.
+SAVE TRANSACTION: Sets a save point within a transaction
