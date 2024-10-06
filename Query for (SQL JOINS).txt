@@ -1,0 +1,542 @@
+SESSION-11 (SQL JOINS) 
+---------------------------------------------------------
+
+
+-- Create the Employees table
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    DepartmentID INT,
+    Salary DECIMAL(10, 2)
+);
+
+-- Create the Departments table
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+-- Insert sample data into Employees table
+INSERT INTO Employees (EmployeeID, FirstName, LastName, DepartmentID, Salary)
+VALUES
+    (1, 'John', 'Doe', 1, 50000),
+    (2, 'Jane', 'Smith', 2, 60000),
+    (3, 'Mike', 'Johnson', 1, 55000),
+    (4, 'Emily', 'Brown', 3, 62000),
+    (5, 'David', 'Lee', 2, 58000),
+    (6, 'Sarah', 'Wilson', 4, 65000),
+    (7, 'Tom', 'Davis', 1, 52000),
+    (8, 'Lisa', 'Anderson', NULL, 59000),
+    (9, 'Chris', 'Taylor', 3, 61000),
+    (10, 'Emma', 'Martinez', 2, 57000);
+
+-- Insert sample data into Departments table
+INSERT INTO Departments (DepartmentID, DepartmentName, Location)
+VALUES
+    (1, 'HR', 'New York'),
+    (2, 'IT', 'San Francisco'),
+    (3, 'Finance', 'Chicago'),
+    (4, 'Marketing', 'Los Angeles'),
+    (5, 'Operations', 'Dallas');
+
+
+### 1. INNER JOIN
+-----------------------------------
+
+**Syntax:**
+```sql
+SELECT columns 
+FROM table1 
+INNER JOIN table2 
+ON table1.column = table2.column;
+```
+
+**Concept:**
+An `INNER JOIN` returns only the rows where there is a match between the columns in both tables. If there is no match, the row is not included in the result set.
+
+**Examples:**
+
+1. **List all employees with their department names:**
+    ```sql
+    SELECT e.EmployeeID, e.FirstName, e.LastName, d.DepartmentName
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query joins the `Employees` table with the `Departments` table where the `DepartmentID` matches. It retrieves employee details along with their department names.
+
+2. **Find the average salary for each department:**
+    ```sql
+    SELECT d.DepartmentName, AVG(e.Salary) AS AverageSalary
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    GROUP BY d.DepartmentName;
+    ```
+    - This query calculates the average salary of employees in each department. It groups results by `DepartmentName`.
+
+3. **List employees who work in departments located in 'San Francisco':**
+    ```sql
+    SELECT e.FirstName, e.LastName, d.DepartmentName, d.Location
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    WHERE d.Location = 'San Francisco';
+    ```
+    - This query lists employees and their department names for those departments located in 'San Francisco'.
+
+
+
+
+-------------------------------------------------
+### 2. LEFT JOIN (LEFT OUTER JOIN)
+-----------------------------------------------
+
+**Syntax:**
+```sql
+SELECT columns 
+FROM table1 
+LEFT JOIN table2 
+ON table1.column = table2.column;
+```
+
+**Concept:**
+A `LEFT JOIN` returns all rows from the left table and the matched rows from the right table. If no match is found, NULL values are returned for columns from the right table.
+
+**Examples:**
+
+1. **List all employees and their department names (including employees without departments):**
+    ```sql
+    SELECT e.EmployeeID, e.FirstName, e.LastName, d.DepartmentName
+    FROM Employees e
+    LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query lists all employees and their department names. Employees without a department will have `NULL` for `DepartmentName`.
+
+2. **Find employees without assigned departments:**
+    ```sql
+    SELECT e.EmployeeID, e.FirstName, e.LastName
+    FROM Employees e
+    LEFT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    WHERE d.DepartmentID IS NULL;
+    ```
+    - This query retrieves employees who do not belong to any department.
+
+3. **Count the number of employees in each department (including departments with no employees):**
+    ```sql
+    SELECT d.DepartmentName, COUNT(e.EmployeeID) AS EmployeeCount
+    FROM Departments d
+    LEFT JOIN Employees e ON d.DepartmentID = e.DepartmentID
+    GROUP BY d.DepartmentName;
+    ```
+    - This query counts employees in each department, including departments with no employees.
+
+4. **List departments and the highest salary in each (showing NULL for departments with no employees):**
+    ```sql
+    SELECT d.DepartmentName, MAX(e.Salary) AS HighestSalary
+    FROM Departments d
+    LEFT JOIN Employees e ON d.DepartmentID = e.DepartmentID
+    GROUP BY d.DepartmentName;
+    ```
+    - This query lists departments with the highest salary within each department. Departments with no employees will show `NULL` for `HighestSalary`.
+
+
+
+--------------------------------------------
+### 3. RIGHT JOIN (RIGHT OUTER JOIN)
+------------------------------------------------
+
+**Syntax:**
+```sql
+SELECT columns 
+FROM table1 
+RIGHT JOIN table2 
+ON table1.column = table2.column;
+```
+
+**Concept:**
+A `RIGHT JOIN` returns all rows from the right table and the matched rows from the left table. If no match is found, NULL values are returned for columns from the left table.
+
+**Examples:**
+
+1. **List all departments and their employees (including departments without employees):**
+    ```sql
+    SELECT d.DepartmentName, e.FirstName, e.LastName
+    FROM Employees e
+    RIGHT JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query lists all departments and their employees, including departments with no employees.
+
+2. **Find departments without any employees:**
+    ```sql
+    SELECT d.DepartmentID, d.DepartmentName
+    FROM Employees e
+    RIGHT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    WHERE e.EmployeeID IS NULL;
+    ```
+    - This query lists departments that do not have any employees.
+
+3. **List departments and the count of employees, showing 0 for departments with no employees:**
+    ```sql
+    SELECT d.DepartmentName, COUNT(e.EmployeeID) AS EmployeeCount
+    FROM Employees e
+    RIGHT JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    GROUP BY d.DepartmentName;
+    ```
+    - This query counts employees in each department, including departments with no employees.
+
+
+
+---------------------------------------------
+### 4. FULL JOIN (FULL OUTER JOIN)
+-------------------------------------------------
+
+**Syntax:**
+```sql
+SELECT columns 
+FROM table1 
+FULL JOIN table2 
+ON table1.column = table2.column;
+```
+
+**Concept:**
+A `FULL JOIN` returns all rows from both tables. If there is no match, NULL values are shown for columns from the table that does not have a match.
+
+**Examples:**
+
+1. **List all employees and all departments, showing NULLs where there's no match:**
+    ```sql
+    SELECT e.EmployeeID, e.FirstName, e.LastName, d.DepartmentID, d.DepartmentName
+    FROM Employees e
+    FULL JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query retrieves all employees and all departments, showing `NULL` where there is no match.
+
+2. **Find employees without departments and departments without employees:**
+    ```sql
+    SELECT e.EmployeeID, e.FirstName, e.LastName, d.DepartmentID, d.DepartmentName
+    FROM Employees e
+    FULL JOIN Departments d ON e.DepartmentID = d.DepartmentID
+    WHERE e.DepartmentID IS NULL OR d.DepartmentID IS NULL;
+    ```
+    - This query retrieves employees who do not belong to any department and departments with no employees.
+
+3. **Count employees in each department and departments without employees:**
+    ```sql
+    SELECT d.DepartmentName, COUNT(e.EmployeeID) AS EmployeeCount
+    FROM Departments d
+    FULL JOIN Employees e ON d.DepartmentID = e.DepartmentID
+    GROUP BY d.DepartmentName;
+    ```
+    - This query counts the number of employees in each department, including departments with no employees.
+
+4. **List all employees and departments, replacing NULL with 'N/A' or
+
+ 'No department':**
+    ```sql
+    SELECT COALESCE(e.FirstName, 'N/A') AS EmployeeName, 
+           COALESCE(d.DepartmentName, 'No department') AS DepartmentName
+    FROM Employees e
+    FULL JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query lists all employees and departments, replacing `NULL` values with 'N/A' or 'No department'.
+
+5. **List departments and their employees, including departments and employees without matches:**
+    ```sql
+    SELECT COALESCE(e.FirstName, 'No employee') AS EmployeeName, 
+           COALESCE(d.DepartmentName, 'No department') AS DepartmentName
+    FROM Employees e
+    FULL JOIN Departments d ON e.DepartmentID = d.DepartmentID;
+    ```
+    - This query lists all departments and their employees, including those without matches.
+
+
+
+
+
+
+
+
+--------------------------------------------------
+
+### 1. **Self Join *
+-------------------------------------------------------
+
+A **Self Join** is when a table is joined with itself. This is helpful when you want to compare rows within the same table. To achieve this, you typically alias the table and treat it as if there were two separate tables.
+
+#### Example: Find employees with the same department as another employee.
+
+```sql
+-- Self Join to find employees in the same department
+SELECT 
+    E1.EmployeeID AS Employee1_ID, 
+    E1.FirstName + ' ' + E1.LastName AS Employee1_Name,
+    E2.EmployeeID AS Employee2_ID, 
+    E2.FirstName + ' ' + E2.LastName AS Employee2_Name,
+    D.DepartmentName
+FROM 
+    Employees E1
+JOIN 
+    Employees E2 
+    ON E1.DepartmentID = E2.DepartmentID 
+    AND E1.EmployeeID <> E2.EmployeeID -- Exclude the same employee
+JOIN 
+    Departments D 
+    ON E1.DepartmentID = D.DepartmentID;
+```
+
+#### Explanation:
+- `E1` and `E2` are two different aliases of the `Employees` table.
+- The condition `E1.DepartmentID = E2.DepartmentID` ensures that we are comparing employees from the same department.
+- `E1.EmployeeID <> E2.EmployeeID` avoids pairing an employee with themselves.
+- The `JOIN Departments` statement brings the department name into the result.
+
+#### Output:
+
+| Employee1_ID | Employee1_Name | Employee2_ID | Employee2_Name | DepartmentName |
+|--------------|----------------|--------------|----------------|----------------|
+| 1            | John Doe       | 3            | Mike Johnson   | HR             |
+| 3            | Mike Johnson   | 1            | John Doe       | HR             |
+| 2            | Jane Smith     | 5            | David Lee      | IT             |
+| 5            | David Lee      | 2            | Jane Smith     | IT             |
+
+
+
+----------------------------------------------
+### 2. **Cross Join **
+-----------------------------------------------
+
+A **Cross Join** returns the Cartesian product of two tables. This means that each row in the first table is paired with every row in the second table.
+
+#### Example: Pair each employee with each department (even if not related).
+
+```sql
+-- Cross Join to pair each employee with each department
+SELECT 
+    E.EmployeeID, 
+    E.FirstName + ' ' + E.LastName AS EmployeeName,
+    D.DepartmentID, 
+    D.DepartmentName
+FROM 
+    Employees E
+CROSS JOIN 
+    Departments D;
+```
+
+#### Explanation:
+- In a `CROSS JOIN`, no condition is applied between the two tables, so every row in the `Employees` table is matched with every row in the `Departments` table.
+- The result will have a large number of rows, representing all possible combinations of employees and departments.
+
+#### Output:
+
+| EmployeeID | EmployeeName  | DepartmentID | DepartmentName |
+|------------|---------------|--------------|----------------|
+| 1          | John Doe      | 1            | HR             |
+| 1          | John Doe      | 2            | IT             |
+| 1          | John Doe      | 3            | Finance        |
+| 1          | John Doe      | 4            | Marketing      |
+| 1          | John Doe      | 5            | Operations     |
+| 2          | Jane Smith    | 1            | HR             |
+| 2          | Jane Smith    | 2            | IT             |
+| 2          | Jane Smith    | 3            | Finance        |
+| 2          | Jane Smith    | 4            | Marketing      |
+| 2          | Jane Smith    | 5            | Operations     |
+| ...        | ...           | ...          | ...            |
+
+Each employee is listed with each department, resulting in a Cartesian product.
+
+---
+
+These two types of joins serve different purposes:
+- **Self Join** helps in comparing rows within the same table (e.g., employees from the same department).
+- **Cross Join** helps in creating all possible combinations between two tables (e.g., all possible employee-department pairings).
+
+
+
+--------------------------------
+JOINs with Multiple Tables
+----------------------------------------
+/*
+------------------------
+Without Aliases
+-------------------
+SELECT Column_Names 
+FROM  Table1
+FULL OUTER JOIN 
+Table2
+ON 
+Table1.common_column = Table2.Common_columns
+FULL OUTER JOIN 
+Table2.Common_column = Table2.Common_Columns
+
+------------------------------
+With Aliases
+-------------------
+SELECT T1.Column_Names , T2.Column_Names ,T3.Column_Names
+FROM  Table1 AS T1
+FULL OUTER JOIN 
+Table2 AS T2
+ON 
+T1.common_column = T2.Common_columns
+FULL OUTER JOIN 
+Table3 AS T3
+ON T2.Common_Columns = T3.Column_Name
+
+*/
+
+
+
+You can join more than two tables in a single query.
+Example with Three Tables:
+SELECT C.customer_id, C.first_name, O.amount, S.status
+FROM Customers AS C
+INNER JOIN Orders AS O
+ON C.customer_id = O.customer
+INNER JOIN Shippings AS S
+ON C.customer_id = S.customer;
+This query joins Customers, Orders, and Shippings tables on customer_id, 
+
+selecting data from all three tables.
+
+
+
+
+-------------------------------------------------
+Assignment Questions 
+
+-----------------------------------------------------
+
+
+
+-- Create Customers Table
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    City VARCHAR(50),
+    Age INT,
+    PhoneNumber VARCHAR(20)
+);
+
+-- Create Orders Table
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    OrderDate DATE,
+    CustomerID INT,  -- Foreign Key to Customers table
+    Amount DECIMAL(10, 2),
+    ProductName VARCHAR(100),
+    CONSTRAINT FK_CustomerOrder FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Insert records into Customers (including NULLs)
+INSERT INTO Customers (CustomerID, CustomerName, City, Age, PhoneNumber)
+VALUES
+(1, 'Alice', 'New York', 25, '1234567890'),
+(2, 'Bob', 'Los Angeles', 30, NULL),
+(3, 'Charlie', 'Chicago', 40, '0987654321'),
+(4, 'David', NULL, 35, '1234509876'),
+(5, 'Eve', 'San Francisco', NULL, '0987651234'),
+(6, 'Frank', 'Houston', 50, NULL),
+(7, 'Grace', NULL, 28, '1230984567'),
+(8, 'Hannah', 'Miami', NULL, '2345670987'),
+(9, 'Ivy', 'Seattle', 60, '0982345671'),
+(10, 'Jack', 'New York', 27, '3456789012');
+
+-- Insert records into Orders (including NULLs)
+INSERT INTO Orders (OrderID, OrderDate, CustomerID, Amount, ProductName)
+VALUES
+(101, '2024-09-01', 1, 150.00, 'Laptop'),
+(102, '2024-09-03', 2, 200.00, 'Smartphone'),
+(103, '2024-09-04', 3, 50.00, NULL),
+(104, '2024-09-05', NULL, 500.00, 'Tablet'),
+(105, '2024-09-06', 5, 100.00, 'Headphones'),
+(106, '2024-09-07', 6, NULL, 'Monitor'),
+(107, '2024-09-08', 7, 75.00, 'Keyboard'),
+(108, '2024-09-09', 8, 300.00, 'Printer'),
+(109, '2024-09-10', 9, 400.00, NULL),
+(110, '2024-09-11', 10, 250.00, 'Mouse');
+
+-----------------------------------------------------
+INNER JOIN
+-----------------------------------------------------
+List all customers who have placed an order, along with their order amounts, and order the result by the Amount in descending order.
+
+Retrieve the customer names and their corresponding order dates, filtering only those orders where the amount is greater than 100 and order them by OrderDate.
+
+Display the total amount spent by each customer on their orders using SUM(), but only include customers who have spent more than 200. Use GROUP BY on CustomerID.
+
+Show the CustomerName, City, and the Amount of their orders, but only for those customers whose name starts with 'A'. Sort the results by CustomerName.
+
+Fetch the list of customers and their total order count using COUNT(), but only include customers with more than 1 order, ordering the results by the number of orders in descending order.
+
+-----------------------------------------------------
+LEFT JOIN
+-----------------------------------------------------
+
+Retrieve the names of all customers and their corresponding orders, ensuring that customers without any orders are also included. Order the results by CustomerName.
+
+Show all customers' names and the amount they spent on their orders, but replace null order amounts with the value 0 using ISNULL(). Sort the results by Amount.
+
+List the CustomerName and the count of orders placed by each customer, including customers who have not placed any orders. Use GROUP BY on CustomerID.
+
+Fetch the names of customers along with the average order amount for each customer using AVG(). Include customers without orders as well, and order the results by the average order amount in descending order.
+
+Retrieve the CustomerName and City of all customers who have either not placed any orders or have placed orders for more than 200. Sort by City.
+
+-----------------------------------------------------
+RIGHT JOIN
+-----------------------------------------------------
+
+Display the OrderID, ProductName, and CustomerName for all orders, including orders without associated customers (if any). Order the results by ProductName.
+
+List all the products and their respective order amounts, but ensure that even orders with no customers are displayed. Order by Amount in ascending order.
+
+Fetch the OrderID, CustomerID, and the total amount spent on orders for customers who have placed orders worth more than 100, including orders that may not have customers. Group the results by CustomerID using SUM().
+
+Retrieve the OrderID, OrderDate, and CustomerName for all orders, even if the customer information is missing, and filter for orders placed after '2024-09-05'. Order the results by OrderDate.
+
+Show all orders along with their respective customer names, but include orders without a customer and group the results by CustomerID, showing only customers with an order count greater than 2.
+
+-----------------------------------------------------
+FULL OUTER JOIN
+-----------------------------------------------------
+
+Fetch a list of all customers and their corresponding orders, including customers without orders and orders without customers. Order the result by CustomerName.
+
+Display the CustomerName, OrderID, and Amount for all customers and orders, showing "N/A" for missing customer or order details using COALESCE(). Order by Amount.
+
+List all the customers and orders, including customers who have not placed any orders and orders without customers, grouped by CustomerID and ordered by the sum of their order amounts using SUM().
+
+Show all customers and their corresponding orders, or customers without orders and orders without customers, who have ordered products starting with the letter 'P'. Sort by ProductName.
+
+Fetch the total number of customers and orders, including unmatched customers and orders, using COUNT(), and display only those who have more than 2 related records.
+
+
+-----------------------------------------------------
+SELF JOIN
+-----------------------------------------------------
+
+List all pairs of customers who are from the same city using a self-join on the City field. Exclude the case where a customer is paired with themselves. Order by City.
+
+Retrieve all customers who live in the same city as another customer, and display their names along with the other customer’s name using a self-join. Order by CustomerName.
+
+Display a list of customers who have the same age as another customer, along with both customer names and ages, using a self-join. Exclude pairs of customers who are the same person.
+
+Find all customers who live in the same city as another customer, and show their phone numbers along with the phone numbers of the matching customers, ordered by City.
+
+List all pairs of customers from the same city and show the total number of such pairs using COUNT(), grouped by the City field, and include cities with more than 2 matching pairs.
+
+-----------------------------------------------------
+CROSS JOIN
+-----------------------------------------------------
+
+Generate a list of all possible combinations of customers and orders using a cross join, displaying their names and product names. Order by CustomerName.
+
+Show all possible pairs of customers and their order amounts using a cross join, but only include combinations where the CustomerName of the customer starts with 'A'.
+
+Fetch all combinations of customers and their order details, showing the CustomerName, OrderID, and ProductName, and order by ProductName.
+
+Display the cartesian product of customers and orders, along with the total order amount for each combination using SUM(), ordered by the total amount in descending order.
+
+List all combinations of customers and orders, but filter to show only those where the total amount is greater than 100 using a HAVING clause, and order the result by Amount.
+
+
+
